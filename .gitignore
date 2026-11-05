@@ -1,6 +1,10 @@
 # Maven build output
 target/
 
+# Local credentials and server-specific configuration
+/src/main/resources/application-local.yml
+/tomcat/lnekbpbonl-context.xml
+
 # Compiled Java files
 *.class
 
