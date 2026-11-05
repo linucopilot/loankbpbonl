@@ -42,7 +42,7 @@ public class SystemUtils {
 	@PostConstruct
 	public void init() {
 		try {
-			log.info("SystemUtils instanceID : " + instanceID);
+			
 
 			hostName = env.getProperty(Constants.SPRING_APPLICATION_NAME).indexOf('-') > -1
 					? env.getProperty(Constants.SPRING_APPLICATION_NAME).replace("-", "")
@@ -76,9 +76,9 @@ public class SystemUtils {
 			if (isDr())
 				serviceMode = "R";
 
-			log.info("SystemUtils [E] ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
+			//log.info("SystemUtils [E] ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
 		} catch (Exception e) {
-			log.error(e.toString(), e);
+			//log.error(e.toString(), e);
 		}
 	}
 

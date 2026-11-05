@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: ${spring.profiles.active:local}
+    default: local
   application:
     name: loankbpbonl
 
@@ -25,6 +25,8 @@ server:
     additional-tld-skip-patterns: "*.jar"
 
 logging:
+  file:
+    path: ${APP_LOG_DIR:${user.home}/logs/${spring.application.name}}
   level:
     kh.com.copilot.app: INFO
     org.mybatis: INFO

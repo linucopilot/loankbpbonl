@@ -1,0 +1,95 @@
+<configuration>
+    
+    <!-- 로그 경로 변수 선언 -->
+    <springProperty name="APP_NAME" source="spring.application.name" />
+    <springProperty name="HOSTNAME" source="HOSTNAME" />
+    <springProperty name="CSULOGLEVEL" source="logging.level.kh.com.copilot.app" />
+    <springProperty name="JDBCLOGLEVEL" source="logging.level.jdbc.sql" />
+    <springProperty name="SPRINGLOGLEVEL" source="logging.level.org.springframework" />
+    <springProperty name="ROOTLOGLEVEL" source="logging.level.root" />
+    <springProperty name="MAX_HISTORY" source="logging.file.max-history" />
+    <springProperty name="LOG_DIR" source="logging.file.path" defaultValue="${user.home}/logs/${APP_NAME}" />
+    
+    
+    
+    <!-- Spring Boot Logback Configuration 4 Ansi Console Plugin -->
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+	<property name="CONSOLE_LOG_PATTERN" value="%d %5p [%X{uuid:-startup}] %logger:%replace(%m%wEx){'\\n','\r'}%nopex%n" />
+	<property name="FILE_LOG_PATTERN" value="%d{dd-MM-yyyy HH:mm:ss.SSS} %5p ${PID:- } - [%X{uuid:-startup}] [%t] %-40.40logger{39} : %m%n%wex" />
+
+	
+	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+	<!-- <include resource="org/springframework/boot/logging/logback/file-appender.xml" /> -->
+
+	<!-- Spring Boot Logback Configuration 4 Grep Console Plugin-->
+	
+    <!-- Rolling File Appender -->
+    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 파일 경로 -->
+        <!-- <file>${LOG_PATH}</file> -->
+        <!-- 출력패턴 -->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <!-- Rolling 정책 -->
+        <!-- <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <!-- .gz,.zip 등을 넣으면 자동으로 일자별 로그파일 압축 -->
+            <fileNamePattern>${LOG_DIR}/%d{ddMMyyyy}/${HOSTNAME}_%i.log</fileNamePattern>
+            <!-- 파일당 최고 용량 50MB -->
+            <maxFileSize>50MB</maxFileSize>
+            <!-- 일자별 로그파일 최대 보관주기(일단위) 
+                              만약 해당 설정일 이상된 파일은 자동으로 제거-->
+            <maxHistory>${MAX_HISTORY:-30}</maxHistory>
+        </rollingPolicy>
+    </appender>
+    
+    <!-- Rolling File Appender error -->
+    <appender name="ROLLING_FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!-- 출력패턴 -->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <!-- Rolling 정책 -->
+        <!-- <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <!-- .gz,.zip 등을 넣으면 자동으로 일자별 로그파일 압축 -->
+            <fileNamePattern>${LOG_DIR}/%d{ddMMyyyy}/${HOSTNAME}_err_%i.log</fileNamePattern>
+            <!-- 파일당 최고 용량 10MB -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- 일자별 로그파일 최대 보관주기(일단위) 
+                              만약 해당 설정일 이상된 파일은 자동으로 제거-->
+            <maxHistory>${MAX_HISTORY:-30}</maxHistory>
+        </rollingPolicy>
+    </appender>
+ 
+    <logger name="kh.com.copilot.app" level="${CSULOGLEVEL}"/>
+    <logger name="org.springframework" level="${SPRINGLOGLEVEL}"/>
+    <logger name="java.sql" level="ERROR"/>
+    <logger name="jdbc.sqltiming" level="${JDBCLOGLEVEL}"/>
+	<logger name="jdbc.resultsettable" level="${JDBCLOGLEVEL}" />
+	<logger name="jdbc.connection" level="ERROR" />		
+	<!-- SQL ONLY -->
+	<logger name="jdbc.sqlonly" level="ERROR" /> 
+	<!-- RESULTSET 제외 모든 JDBC 호출 정보 -->
+	<logger name="jdbc.audit" level="ERROR" /> 
+	<!-- RESULTSET 포함 모든 JDBC 호출 정보 -->
+	<logger name="jdbc.resultset" level="ERROR" />
+ 	<logger name="log4jdbc.log4j2" level="ERROR" />	
+ 
+    <root level="${ROOTLOGLEVEL}"> <!-- DEBUG -->
+        <appender-ref ref="ROLLING_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ROLLING_FILE_ERROR"/>
+    </root>
+</configuration>
