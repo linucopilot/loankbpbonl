@@ -1,0 +1,26 @@
+# Maven build output
+target/
+
+# Local credentials and server-specific configuration
+/src/main/resources/application-local.yml
+/tomcat/lnekbpbonl-context.xml
+
+# Compiled Java files
+*.class
+
+# Logs
+*.log
+logs/
+
+# IDE metadata
+.idea/
+*.iml
+.classpath
+.factorypath
+.project
+.settings/
+.vscode/
+
+# Operating system files
+.DS_Store
+Thumbs.db
