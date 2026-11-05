@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kh.com.copilot.app.common.dao.DatabaseDao">
+
+    <select id="selectDatabaseInfo" resultType="map">
+        SELECT
+            SYS_CONTEXT('USERENV', 'DB_NAME') AS DATABASE_NAME,
+            SYS_CONTEXT('USERENV', 'SERVICE_NAME') AS SERVICE_NAME,
+            SYS_CONTEXT('USERENV', 'CURRENT_SCHEMA') AS CURRENT_SCHEMA
+        FROM DUAL
+    </select>
+
+    <select id="selectDualValue" resultType="map">
+        SELECT #{value} AS RESULT_VALUE
+        FROM DUAL
+    </select>
+
+</mapper>
