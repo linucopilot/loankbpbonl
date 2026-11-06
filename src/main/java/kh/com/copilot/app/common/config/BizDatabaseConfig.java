@@ -19,7 +19,10 @@ import kh.com.copilot.app.common.constants.Constants;
 import kh.com.copilot.app.common.util.SystemUtils;
 
 @Configuration
-@MapperScan(basePackages = "kh.com.copilot.app.common.dao", sqlSessionFactoryRef = "bizSqlSessionFactory")
+@MapperScan(basePackages = {
+		"kh.com.copilot.app.common.dao",
+		"kh.com.copilot.app.csm.dao"
+}, sqlSessionFactoryRef = "bizSqlSessionFactory")
 public class BizDatabaseConfig {
 
 	// mybatis 설정

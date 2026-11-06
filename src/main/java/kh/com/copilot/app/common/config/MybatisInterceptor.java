@@ -44,7 +44,7 @@ public class MybatisInterceptor implements Interceptor {
 		}
 		String queryId = mappedStatement.getId();
 
-		log.debug("Intercepting MyBatis {} statement {}", method, queryId);
+		//log.debug("Intercepting MyBatis {} statement {}", method, queryId);
 
 		if (param instanceof Map<?, ?> parameters) {
 			@SuppressWarnings("unchecked")

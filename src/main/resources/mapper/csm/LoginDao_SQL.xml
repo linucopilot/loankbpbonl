@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kh.com.copilot.app.csm.dao.LoginDao">
+
+    <select id="selectListUser" parameterType="Map" resultType="Map">
+		SELECT /* kh.com.copilot.app.csm.dao.LoginDao.selectListUser */
+			   USR.OPER_GROUP_CD 	AS "operGroupCd"
+			 , USR.UNO				AS "uno"
+			 , USR.USER_NAME		AS "userName"
+			 , USR.PWD				AS "pwd"
+			 , USR.BRN_CODE			AS "brnCode"
+			 , USR.USE_YN			AS "useYn"
+		  FROM ${schema}.TSCSM0002 USR
+   	     WHERE 1=1
+   	       AND USR.OPER_GROUP_CD = #{operGroupCd}
+		<if test="uno != null and uno != '' ">
+	       AND UPPER(USR.UNO) = UPPER(#{uno})
+		</if>
+	</select>
+
+</mapper>
