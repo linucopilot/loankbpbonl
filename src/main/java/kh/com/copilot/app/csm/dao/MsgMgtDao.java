@@ -5,8 +5,11 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import kh.com.copilot.app.common.dto.ErrorMessageDTO;
+
 @Mapper
 public interface MsgMgtDao {
+	public List<ErrorMessageDTO> selectErrorCodeList(Map<String, Object> data);
 	/**
 	 * 메시지 목록조회
 	 * 

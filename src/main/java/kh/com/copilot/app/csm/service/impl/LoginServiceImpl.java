@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import kh.com.copilot.app.common.exception.BusinessException;
 import kh.com.copilot.app.csm.dao.LoginDao;
 import kh.com.copilot.app.csm.service.LoginService;
 
@@ -27,7 +28,7 @@ public class LoginServiceImpl implements LoginService {
 
 		if (list == null || list.isEmpty()) {
 			result.put("totalCnt", 0);
-			return result;
+			throw new BusinessException("CSMA00001", "CSMT00001");
 		}
 
 		result.put("totalCnt", list.get(0).get("totalCnt"));

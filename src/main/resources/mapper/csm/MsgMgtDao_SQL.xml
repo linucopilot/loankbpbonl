@@ -5,6 +5,37 @@
 
 <mapper namespace="kh.com.copilot.app.csm.dao.MsgMgtDao">
 
+    <select id="selectErrorCode" parameterType="Map" resultType="kh.com.copilot.app.common.dto.ErrorMessageDTO">
+		SELECT /* kh.com.kbprasac.csu.csm.dao.CommonDao.selectErrorCode */
+			    OUTPT_CTNT1 AS "outptCtnt1"
+			  , OUTPT_CTNT2 AS "outptCtnt2"
+			  , CHNL_DSTCD AS "chnlDstcd"
+		FROM ${schema}.TSCSM0003 ET		
+		 WHERE ET.OPER_GROUP_CD = #{operGroupCd}
+		   AND ET.ERR_MSGCD = #{errorMsgcd}
+		   	<if test="langDstcd != null and langDstcd != '' ">
+		       AND ET.LANG_DSTCD = #{langDstcd} 
+			</if>
+	</select>
+	
+	<select id="selectErrorCodeList" parameterType="Map" resultType="kh.com.copilot.app.common.dto.ErrorMessageDTO">
+		SELECT /* kh.com.kbprasac.csu.csm.dao.CommonDao.selectErrorCode */
+			    OUTPT_CTNT1 	AS "outptCtnt1"
+			  , OUTPT_CTNT2 	AS "outptCtnt2"
+			  , CHNL_DSTCD  	AS "chnlDstcd"
+			  , MSG_KND_CD_NO 	AS "msgKndCdNo"
+		FROM ${schema}.TSCSM0003 ET		
+		 WHERE ET.OPER_GROUP_CD = #{operGroupCd}
+		   AND ET.ERR_MSGCD IN 
+		    <foreach collection="list" item="item" index="index" separator="," open="(" close=")"> 
+				#{item}
+			</foreach> 
+		    <!-- #{errorMsgcd} -->
+		   	<if test="langDstcd != null and langDstcd != '' ">
+		       AND ET.LANG_DSTCD = #{langDstcd} 
+			</if>
+	</select>
+
     <select id="selectListMsgMgt" parameterType="Map" resultType="Map">
 	SELECT /* kh.com.kbprasac.csu.lne.cmn.dao.MsgMgtDao.selectListMsgMgt */
 		 LANG_DSTCD               AS "langDstcd"            /* 언어구분코드 */                                 
