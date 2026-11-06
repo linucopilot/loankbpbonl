@@ -8,6 +8,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface LoginDao {
 
-	public List<Map<String, Object>> selectListUser(Map<String, Object> data);
+	public List<Map<String, Object>> selectListUserMgt(Map<String, Object> data);
 
 }

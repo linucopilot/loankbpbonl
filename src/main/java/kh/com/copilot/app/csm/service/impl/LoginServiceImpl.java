@@ -18,12 +18,12 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
-	public Map<String, Object> selectListUser(Map<String, Object> params) {
+	public Map<String, Object> selectListUserMgt(Map<String, Object> params) {
 		Map<String, Object> result = new HashMap<>();
-		List<Map<String, Object>> list = loginDao.selectListUser(params);
+		List<Map<String, Object>> list = loginDao.selectListUserMgt(params);
 
-		result.put("dmndCnt", params.get("dmndCnt"));
-		result.put("displayCnt", params.get("displayCnt"));
+		result.put("pageCnt", params.get("pageCnt"));
+		result.put("pageNo", params.get("pageNo"));
 
 		if (list == null || list.isEmpty()) {
 			result.put("totalCnt", 0);

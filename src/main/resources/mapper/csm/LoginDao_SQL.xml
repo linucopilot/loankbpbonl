@@ -5,20 +5,34 @@
 
 <mapper namespace="kh.com.copilot.app.csm.dao.LoginDao">
 
-    <select id="selectListUser" parameterType="Map" resultType="Map">
-		SELECT /* kh.com.copilot.app.csm.dao.LoginDao.selectListUser */
-			   USR.OPER_GROUP_CD 	AS "operGroupCd"
-			 , USR.UNO				AS "uno"
-			 , USR.USER_NAME		AS "userName"
-			 , USR.PWD				AS "pwd"
-			 , USR.BRN_CODE			AS "brnCode"
-			 , USR.USE_YN			AS "useYn"
+    <select id="selectListUserMgt" parameterType="Map" resultType="Map">
+		SELECT /* kh.com.copilot.app.csm.dao.LoginDao.selectListUserMgt */
+			  USR.OPER_GROUP_CD  AS "operGroupCd"
+			, USR.UNO            AS "uno"
+			, USR.USER_NAME      AS "userName"
+			, USR.EMPLOYEE_ID	 AS "empId"
+			, USR.PWD            AS "pwd"
+			, USR.BRN_CODE       AS "brnCode"
+			, USR.POS_CODE 	  	 AS "postCode"
+			, USR.DEP_CODE 	  	 AS "regiCode"
+			, USR.REG_CODE 	  	 AS "postCode"
+			, USR.USE_YN         AS "useYn"
+			, TO_CHAR(USR.SYS_CREATE_PRCSS_YMS, 'DDMMYYYY')  AS "sysCreateYms"
+			, TO_CHAR(USR.SYS_LAST_PRCSS_YMS,   'DDMMYYYY')  AS "sysLastYms"
+			, USR.SYS_CREATE_UNO 	      	  AS "sysCreateUno"
+			, USR.SYS_LAST_UNO 	      	 	  AS "sysLastUno"
+			, COUNT(*) OVER ()   AS "totalCnt"
 		  FROM ${schema}.TSCSM0002 USR
    	     WHERE 1=1
    	       AND USR.OPER_GROUP_CD = #{operGroupCd}
 		<if test="uno != null and uno != '' ">
 	       AND UPPER(USR.UNO) = UPPER(#{uno})
 		</if>
+		<if test="brnCode != null and brnCode != '' ">
+	       AND USR.BRN_CODE = #{brnCode}
+		</if>
+		 OFFSET (#{pageCnt}*(#{pageNo}-1)) ROWS
+		 FETCH FIRST #{pageCnt} ROWS ONLY
 	</select>
 
 </mapper>

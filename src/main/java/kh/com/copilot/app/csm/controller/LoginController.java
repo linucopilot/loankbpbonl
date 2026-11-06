@@ -19,12 +19,12 @@ public class LoginController {
 		this.loginService = loginService;
 	}
 	
-	@PostMapping(value = "/auth/selectUserList")
+	@PostMapping(value = "/auth/selectListUserMgt")
 	public ResultPayload selectUserList(HttpServletRequest request, @RequestBody Map<String, Object> params) {
 		//log.info("selectUserList start...");
 		ResultPayload rPayload = new ResultPayload();
 		rPayload.setResultCd(Constants.SUCCESS_CD);
-		rPayload.setResultData(loginService.selectListUser(params));
+		rPayload.setResultData(loginService.selectListUserMgt(params));
 		return rPayload;
 	}
 }

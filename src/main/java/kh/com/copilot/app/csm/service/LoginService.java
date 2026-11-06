@@ -4,5 +4,5 @@ import java.util.Map;
 
 public interface LoginService {
 	
-	public Map<String, Object> selectListUser(Map<String, Object> params);
+	public Map<String, Object> selectListUserMgt(Map<String, Object> params);
 }

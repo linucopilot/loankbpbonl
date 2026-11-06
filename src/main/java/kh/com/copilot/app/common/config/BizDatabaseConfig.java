@@ -20,8 +20,8 @@ import kh.com.copilot.app.common.util.SystemUtils;
 
 @Configuration
 @MapperScan(basePackages = {
-		"kh.com.copilot.app.common.dao",
-		"kh.com.copilot.app.csm.dao"
+		"kh.com.copilot.app.common.**.dao",
+		"kh.com.copilot.app.csm.**.dao"
 }, sqlSessionFactoryRef = "bizSqlSessionFactory")
 public class BizDatabaseConfig {
 
