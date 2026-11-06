@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kh.com.copilot.app.csm.dao.MenuMgtDao">
+	<select id="selectListMenuAll" parameterType="Map" resultType="Map">
+		<include refid="commonMenuList"/>
+		OFFSET (#{pageCnt} * (#{pageNo} - 1)) ROWS
+		FETCH FIRST #{pageCnt} ROWS ONLY
+	</select>
+
+	<sql id="commonMenuList">
+		SELECT /* kh.com.copilot.app.csm.dao.MenuMgtDao.selectListMenuAll */
+		  	   M.MENU_ID			AS "menuId"
+			 , M.MENU_LEV			AS "menuLev"
+			 , M.PARENT_MENU_ID		AS "parentMenuId"
+			 , M.MENU_ENG_NAME		AS "menuEngName"
+			 , M.MENU_URL			AS "menuUrl"
+			 , M.ORDER_SEQ			AS "orderSeq"
+			 , M.APPROVAL_YN    	AS "approvalYn"
+			 , M.USE_YN				AS "useYn"
+			 , M.BRANCH_AUTH		AS "branchAuth"
+			 , COUNT(1) OVER() 		AS "totalCnt"
+		  FROM (SELECT 
+				  	   A.MENU_ID			
+					 , A.MENU_LEV			
+					 , A.PARENT_MENU_ID	
+					 , A.MENU_ENG_NAME
+					 , A.MENU_URL
+					 , A.ORDER_SEQ
+					 , A.APPROVAL_YN
+					 , A.USE_YN	
+					 , A.BRANCH_AUTH
+				  FROM (SELECT
+							   MENU_ID
+							 , LEVEL AS MENU_LEV
+							 , PARENT_MENU_ID
+							 , MENU_ENG_NAME
+							 , MENU_URL
+							 , ORDER_SEQ
+							 , APPROVAL_YN
+							 , USE_YN
+							 , BRANCH_AUTH
+						  FROM ${schema}.TSCSM0001
+				   	     WHERE OPER_GROUP_CD = #{operGroupCd}
+				 	     START WITH PARENT_MENU_ID = 'M'
+				       CONNECT BY PRIOR MENU_ID =  PARENT_MENU_ID
+				        ORDER SIBLINGS BY  ORDER_SEQ) A
+				  UNION ALL
+						SELECT
+							   AA.MENU_ID
+							 , 9 AS MENU_LEV
+							 , AA.PARENT_MENU_ID
+							 , AA.MENU_ENG_NAME
+							 , AA.MENU_URL
+							 , AA.ORDER_SEQ
+							 , AA.APPROVAL_YN
+							 , AA.USE_YN
+							 , AA.BRANCH_AUTH
+						  FROM ${schema}.TSCSM0001 AA
+				   	     WHERE AA.OPER_GROUP_CD = #{operGroupCd}
+				   	       AND AA.PARENT_MENU_ID = 'H'
+		) M
+		 WHERE 1=1
+		   <if test="menuId != null and menuId != '' ">
+		   AND M.MENU_ID LIKE #{menuId}||'%'
+		   </if>
+		   <if test="menuEngName != null and menuEngName != '' ">
+		   AND M.MENU_ENG_NAME LIKE '%'||#{menuEngName}||'%'
+		   </if>
+		   <choose>
+		   	 <when test = "menu2Lev != null and menu2Lev != '' ">
+		   	 	AND M.MENU_ID LIKE #{menu2Lev}||'%'
+		   	 </when>
+		   	 <when test = "menu1Lev != null and menu1Lev != '' ">
+		   	 	AND M.MENU_ID LIKE #{menu1Lev}||'%'
+			 </when>
+		   </choose>
+		   <if test="menuLev != null and menuLev != '' ">
+		   AND M.MENU_LEV = #{menuLev}
+		   </if>
+		   <if test="useYn != null and useYn != '' ">
+		   AND M.USE_YN = #{useYn}
+		   </if>
+	</sql>
+	
+	<select id="selectListMenuCombo" parameterType="Map" resultType="Map">
+		SELECT /* kh.com.copilot.app.csm.dao.MenuMgtDao.selectListMenuCombo */
+  			   MENU_ID 		 AS "menuId"
+  			 , MENU_ENG_NAME AS "menuName"
+  		  FROM ${schema}.TSCSM0001
+  		 WHERE OPER_GROUP_CD = #{operGroupCd}
+		 ORDER BY ORDER_SEQ ASC
+	</select>
+	
+	<insert id="insertMenu" parameterType="Map">
+		INSERT /* kh.com.copilot.app.csm.dao.MenuMgtDao.insertMenu */
+		  INTO ${schema}.TSCSM0001
+			 (
+			   OPER_GROUP_CD
+			 , MENU_ID
+		     , PARENT_MENU_ID
+		     , MENU_ENG_NAME
+		     , MENU_URL
+		     , ORDER_SEQ
+		     , APPROVAL_YN
+		     , USE_YN
+		     , BRANCH_AUTH
+		     , SYS_LAST_PRCSS_YMS
+		     , SYS_LAST_UNO)
+	    VALUES 
+	    	 ( #{operGroupCd}
+	    	 , CASE WHEN #{menuLev}='1' THEN (SELECT 'M'||LPAD(NVL(MAX(SUBSTR(MENU_ID,2)),'00')+1,2,'0') FROM ${schema}.TSCSM0002 WHERE OPER_GROUP_CD = #{operGroupCd} AND PARENT_MENU_ID = 'M')
+	    	 		WHEN #{menuLev}='2' THEN (SELECT #{menu1Lev}||LPAD(NVL(MAX(SUBSTR(MENU_ID,4)),'00')+1,2,'0') FROM ${schema}.TSCSM0001 WHERE OPER_GROUP_CD = #{operGroupCd} AND PARENT_MENU_ID = #{menu1Lev})
+	    	 		WHEN #{menuLev}='3' THEN (SELECT #{menu2Lev}||LPAD(NVL(MAX(SUBSTR(MENU_ID,6)),'00')+1,2,'0') FROM ${schema}.TSCSM0001 WHERE OPER_GROUP_CD = #{operGroupCd} AND PARENT_MENU_ID = #{menu2Lev})
+	    	 		WHEN #{menuLev}='9' THEN (SELECT 'H'||LPAD(NVL(MAX(SUBSTR(MENU_ID,2)),'000000')+1,6,'0') FROM ${schema}.TSCSM0001 WHERE OPER_GROUP_CD = #{operGroupCd} AND PARENT_MENU_ID = 'H') /* HIDDEN 메뉴는 H000000 부터 채번 */
+	    	   END
+			 , CASE WHEN #{menuLev}='1' THEN 'M'
+	    	 		WHEN #{menuLev}='2' THEN #{menu1Lev}
+	    	 		WHEN #{menuLev}='3' THEN #{menu2Lev}
+	    	 		WHEN #{menuLev}='9' THEN 'H'
+	    	   END
+			 , #{menuEngName}
+			 , #{menuUrl}
+			 , #{orderSeq}
+			 , #{approvalYn}
+			 , #{useYn}
+			 , #{branchAuth}
+			 , CURRENT_TIMESTAMP
+			 , #{sysLastUno})
+	</insert>
+
+	<update id="updateMenu" parameterType="Map">
+		UPDATE /* kh.com.copilot.app.csm.dao.MenuMgtDao.updateMenu */
+			   ${schema}.TSCSM0001 
+		   SET MENU_ENG_NAME       = #{menuEngName}
+			 , MENU_URL            = #{menuUrl}
+			 , ORDER_SEQ           = #{orderSeq}
+			 , APPROVAL_YN         = #{approvalYn}
+			 , USE_YN              = #{useYn}
+			 , BRANCH_AUTH		   = #{branchAuth}
+			 , SYS_LAST_PRCSS_YMS  = CURRENT_TIMESTAMP
+			 , SYS_LAST_UNO        = #{sysLastUno}
+		 WHERE OPER_GROUP_CD       = #{operGroupCd}
+		   AND MENU_ID 			   = #{menuId}
+	</update>
+</mapper>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kh.com.copilot.app.csm.dao.MsgMgtDao">
+
+    <select id="selectErrorCode" parameterType="Map" resultType="kh.com.copilot.app.common.dto.ErrorMessageDTO">
+		SELECT /* kh.com.kbprasac.csu.csm.dao.CommonDao.selectErrorCode */
+			    OUTPT_CTNT1 AS "outptCtnt1"
+			  , OUTPT_CTNT2 AS "outptCtnt2"
+			  , CHNL_DSTCD AS "chnlDstcd"
+		FROM ${schema}.TSCSM0003 ET		
+		 WHERE ET.OPER_GROUP_CD = #{operGroupCd}
+		   AND ET.ERR_MSGCD = #{errorMsgcd}
+		   	<if test="langDstcd != null and langDstcd != '' ">
+		       AND ET.LANG_DSTCD = #{langDstcd} 
+			</if>
+	</select>
+	
+	<select id="selectErrorCodeList" parameterType="Map" resultType="kh.com.copilot.app.common.dto.ErrorMessageDTO">
+		SELECT /* kh.com.kbprasac.csu.csm.dao.CommonDao.selectErrorCode */
+			    OUTPT_CTNT1 	AS "outptCtnt1"
+			  , OUTPT_CTNT2 	AS "outptCtnt2"
+			  , CHNL_DSTCD  	AS "chnlDstcd"
+			  , MSG_KND_CD_NO 	AS "msgKndCdNo"
+		FROM ${schema}.TSCSM0003 ET		
+		 WHERE ET.OPER_GROUP_CD = #{operGroupCd}
+		   AND ET.ERR_MSGCD IN 
+		    <foreach collection="list" item="item" index="index" separator="," open="(" close=")"> 
+				#{item}
+			</foreach> 
+		    <!-- #{errorMsgcd} -->
+		   	<if test="langDstcd != null and langDstcd != '' ">
+		       AND ET.LANG_DSTCD = #{langDstcd} 
+			</if>
+	</select>
+
+    <select id="selectListMsgMgt" parameterType="Map" resultType="Map">
+	SELECT /* kh.com.kbprasac.csu.lne.cmn.dao.MsgMgtDao.selectListMsgMgt */
+		 LANG_DSTCD               AS "langDstcd"            /* 언어구분코드 */                                 
+		 , ERR_MSGCD                AS "errMsgcd"             /* 에러메시지코드 */                               
+		 , CHNL_DSTCD               AS "chnlDstcd"            /* 채널구분코드 */                                   
+		 , OUTPT_CTNT1              AS "outptCtnt1"           /* 출력내용1 */                                      
+		 , OUTPT_CTNT2              AS "outptCtnt2"           /* 출력내용2 */                                      
+		 , MSG_KND_CD_NO            AS "msgKndCdNo"           /* 메시지종류코드번호 */     
+		 , count(0)over()           AS "totalCnt"           
+	  FROM ${schema}.TSCSM0003 
+     WHERE OPER_GROUP_CD = #{operGroupCd}
+	<if test="langDstcd != null and langDstcd != '' ">
+       AND LANG_DSTCD = #{langDstcd}
+	</if>
+	<if test="errMsgcd != null and errMsgcd != '' ">
+       AND ERR_MSGCD LIKE '%' || #{errMsgcd} || '%'
+	</if>
+	<if test="outptCtnt1 != null and outptCtnt1 != '' ">
+       AND UPPER(OUTPT_CTNT1) LIKE '%' || UPPER(#{outptCtnt1}) || '%' 
+	</if>
+	<if test="bzwkDstcd != null and bzwkDstcd != '' ">
+       AND UPPER(ERR_MSGCD) LIKE '%' || UPPER(#{bzwkDstcd}) || '%' 
+	</if>
+	<if test="msgKndCdNo != null and msgKndCdNo != '' ">
+       AND UPPER(ERR_MSGCD) LIKE '%' || UPPER(#{msgKndCdNo}) || '%' 
+	</if>
+    ORDER BY ERR_MSGCD, LANG_DSTCD
+	OFFSET (#{pageCnt}*(#{pageNo}-1))  ROWS
+	FETCH FIRST #{pageCnt} ROWS ONLY
+	</select>
+	
+	<select id="selectMsgcdExstYn" parameterType="Map" resultType="Map">
+  	SELECT /* kh.com.kbprasac.csu.lne.cmn.dao.MsgMgtDao.selectMsgcdExstYn */ 
+  	  CASE WHEN MAX(ERR_MSGCD) IS NULL THEN #{bzwkDstcd} || #{msgKndCdNo} || '00001'
+  	            ELSE #{bzwkDstcd} || #{msgKndCdNo} || LPAD(TO_CHAR(TO_NUMBER(SUBSTR(MAX(ERR_MSGCD), 5)) + 1), 5, '0') 
+  	            END AS "errMsgcd"
+	  FROM ${schema}.TSCSM0003 
+     WHERE OPER_GROUP_CD = #{operGroupCd}
+       AND ERR_MSGCD LIKE #{bzwkDstcd} || #{msgKndCdNo} || '%'
+	</select>
+
+	<insert id="insertMsgMgt" parameterType="Map">
+	INSERT /* kh.com.kbprasac.csu.lne.cmn.dao.MsgMgtDao.insertMsgMgt */ 
+	  INTO ${schema}.TSCSM0003 
+	(   OPER_GROUP_CD                                     
+      , LANG_DSTCD                                      
+      , ERR_MSGCD                               
+      , CHNL_DSTCD                                            
+      , OUTPT_CTNT1                                       
+      , OUTPT_CTNT2                                       
+      , MSG_KND_CD_NO    
+      , SYS_LAST_PRCSS_YMS                                
+      , SYS_LAST_UNO                                      
+	)                                                     
+	VALUES                                                
+    (   #{operGroupCd}                                 
+      , #{langDstcd}                              
+      , #{errMsgcd}
+      , #{chnlDstcd}                                   
+      , #{outptCtnt1}                                  
+      , NVL(#{outptCtnt2}, ' ')                                  
+      , #{msgKndCdNo}
+      , CURRENT_TIMESTAMP
+      , #{sysLastUno}
+    )
+	</insert>
+	
+	<update id="updateMsgMgt" parameterType="Map">
+	UPDATE /* kh.com.kbprasac.csu.lne.cmn.dao.MsgMgtDao.updateMsgMgt */
+	       ${schema}.TSCSM0003 
+	   SET 
+		   OUTPT_CTNT1 = #{outptCtnt1}
+		 , OUTPT_CTNT2 = NVL(#{outptCtnt2}, ' ')
+		 , SYS_LAST_PRCSS_YMS = CURRENT_TIMESTAMP
+		 , SYS_LAST_UNO = #{sysLastUno}
+	 WHERE OPER_GROUP_CD = #{operGroupCd}
+	   AND LANG_DSTCD = #{langDstcd}
+	   AND ERR_MSGCD = #{errMsgcd}
+	   AND CHNL_DSTCD = #{chnlDstcd}
+	</update>
+	
+	<delete id="deleteMsgMgt" parameterType="Map">
+	DELETE /* kh.com.kbprasac.csu.lne.cmn.dao.MsgMgtDao.deleteMsgMgt */ 
+	  FROM ${schema}.TSCSM0003 
+	 WHERE OPER_GROUP_CD = #{operGroupCd}
+	   AND LANG_DSTCD = #{langDstcd}
+	   AND ERR_MSGCD = #{errMsgcd}
+	   AND CHNL_DSTCD = #{chnlDstcd}
+	</delete>	  
+</mapper>

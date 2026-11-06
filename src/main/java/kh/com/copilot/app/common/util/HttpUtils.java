@@ -109,7 +109,7 @@ public class HttpUtils {
 				return JsonUtils.readJson(headerValue);
 			}
 		} catch (RuntimeException e) {
-			log.debug("getVuejsCommonHeader parsing error");
+			//log.debug("getVuejsCommonHeader parsing error");
 		}
 
 		return null;
@@ -135,7 +135,7 @@ public class HttpUtils {
 			JsonNode headerValue = vueHeader.get(headerKey);
 			return headerValue == null ? "" : headerValue.asText();
 		} catch (RuntimeException e) {
-			log.debug("getHeaderValue parsing error", e);
+			//log.debug("getHeaderValue parsing error", e);
 			return "";
 		}
 	}

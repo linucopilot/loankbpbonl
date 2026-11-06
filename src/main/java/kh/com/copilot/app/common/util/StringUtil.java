@@ -2071,7 +2071,7 @@ public class StringUtil {
 			}
 
 		} catch (java.io.UnsupportedEncodingException e) {
-			log.info("error StringUtil.java - makeWithHangulLen ::{}", e);
+			//log.info("error StringUtil.java - makeWithHangulLen ::{}", e);
 		}
 
 		return ary;
@@ -2318,7 +2318,7 @@ public class StringUtil {
 	 */
 	public static boolean urlMatches(String lookupPath, String pattern) {
 		PathMatcher pathMatcher = new AntPathMatcher();
-		log.info("args: " + lookupPath + " :  : " + pattern + " : : " + pathMatcher.match(pattern, lookupPath));
+		//log.info("args: " + lookupPath + " :  : " + pattern + " : : " + pathMatcher.match(pattern, lookupPath));
 		return pathMatcher.match(pattern, lookupPath);
 	}
 

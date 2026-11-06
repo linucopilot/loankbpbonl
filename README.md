@@ -110,3 +110,70 @@ Change only the Tomcat resource's URL, username, password and pool settings for 
 - Do not place real database passwords in Git.
 - Tune pool sizes against Oracle capacity and the number of Tomcat instances.
 - Use HTTPS and appropriate access controls in production.
+
+## 7. Create menu table
+
+```sql
+CREATE TABLE LNE_MGR.TSCSM0001 (
+    OPER_GROUP_CD        CHAR(3)         NOT NULL,
+    MENU_ID              VARCHAR2(10)    NOT NULL,
+    PARENT_MENU_ID       VARCHAR2(10)    NOT NULL,
+    MENU_ENG_NAME        VARCHAR2(200)   NOT NULL,
+    MENU_URL             VARCHAR2(200),
+    ORDER_SEQ            NUMBER(38,0)    NOT NULL,
+    USE_YN               CHAR(1)         NOT NULL,
+    APPROVAL_YN          CHAR(1)         NOT NULL,
+    BRANCH_AUTH          VARCHAR2(1000),
+    SYS_CREATE_PRCSS_YMS TIMESTAMP       NOT NULL,
+    SYS_LAST_PRCSS_YMS   TIMESTAMP       NOT NULL,
+    SYS_CREATE_UNO       VARCHAR2(20)    NOT NULL,
+    SYS_LAST_UNO         VARCHAR2(20)    NOT NULL
+);
+
+ALTER TABLE LNE_MGR.TSCSM0001
+    ADD CONSTRAINT PK_TSCSM_MENU
+    PRIMARY KEY (OPER_GROUP_CD, MENU_ID);
+
+CREATE TABLE LNE_MGR.TSCSM0002 (
+    OPER_GROUP_CD        CHAR(3)         NOT NULL,
+    UNO                  VARCHAR2(20)    NOT NULL,
+    USER_NAME            VARCHAR2(200)   NOT NULL,
+    PWD                  VARCHAR2(150)   NOT NULL,
+    BRN_CODE             VARCHAR2(3),
+    POS_CODE             VARCHAR2(5),
+    DEP_CODE             VARCHAR2(5),
+    REG_CODE             VARCHAR2(5),
+    USE_YN               CHAR(1)         NOT NULL,
+    SYS_CREATE_PRCSS_YMS TIMESTAMP       NOT NULL,
+    SYS_LAST_PRCSS_YMS   TIMESTAMP       NOT NULL,
+    SYS_CREATE_UNO       VARCHAR2(20)    NOT NULL,
+    SYS_LAST_UNO         VARCHAR2(20)    NOT NULL
+);
+
+ALTER TABLE LNE_MGR.TSCSM0002
+    ADD CONSTRAINT XSCSM0001P
+    PRIMARY KEY (OPER_GROUP_CD, UNO);
+
+GRANT CREATE SESSION TO LNE_APP;
+GRANT SELECT, INSERT, UPDATE, DELETE ON LNE_MGR.TSCSM0002 TO LNE_APP;
+
+CREATE TABLE LNE_MGR.TSCSM0003 (
+    OPER_GROUP_CD        CHAR(3)          NOT NULL,
+    LANG_DSTCD           VARCHAR2(3)      NOT NULL,
+    ERR_MSGCD            VARCHAR2(9)      NOT NULL,
+    CHNL_DSTCD           VARCHAR2(2)      NOT NULL,
+    OUTPT_CTNT1          VARCHAR2(1000)   NOT NULL,
+    OUTPT_CTNT2          VARCHAR2(1000),
+    MSG_KND_CD_NO        VARCHAR2(2)      NOT NULL,
+    SYS_CREATE_PRCSS_YMS TIMESTAMP        NOT NULL,
+    SYS_LAST_PRCSS_YMS   TIMESTAMP        NOT NULL,
+    SYS_CREATE_UNO       VARCHAR2(20)     NOT NULL,
+    SYS_LAST_UNO         VARCHAR2(20)     NOT NULL
+);
+
+ALTER TABLE LNE_MGR.TSCSM0003
+    ADD CONSTRAINT XSCSM0003P
+    PRIMARY KEY (OPER_GROUP_CD, ERR_MSGCD, LANG_DSTCD, CHNL_DSTCD);
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON LNE_MGR.TSCSM0003 TO LNE_APP;
+```
