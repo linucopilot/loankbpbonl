@@ -87,8 +87,10 @@
       , OUTPT_CTNT1                                       
       , OUTPT_CTNT2                                       
       , MSG_KND_CD_NO    
-      , SYS_LAST_PRCSS_YMS                                
-      , SYS_LAST_UNO                                      
+      , SYS_CREATE_YMS
+      , SYS_LAST_PRCSS_YMS                            
+      , SYS_CREATE_UNO
+      , SYS_UPDATED_UNO                                      
 	)                                                     
 	VALUES                                                
     (   #{operGroupCd}                                 
@@ -99,18 +101,20 @@
       , NVL(#{outptCtnt2}, ' ')                                  
       , #{msgKndCdNo}
       , CURRENT_TIMESTAMP
+      , CURRENT_TIMESTAMP
+      , #{sysCreateUno}
       , #{sysLastUno}
     )
 	</insert>
 	
 	<update id="updateMsgMgt" parameterType="Map">
-	UPDATE /* kh.com.kbprasac.csu.lne.cmn.dao.MsgMgtDao.updateMsgMgt */
+	 UPDATE /* kh.com.kbprasac.csu.lne.cmn.dao.MsgMgtDao.updateMsgMgt */
 	       ${schema}.TSCSM0003 
 	   SET 
 		   OUTPT_CTNT1 = #{outptCtnt1}
 		 , OUTPT_CTNT2 = NVL(#{outptCtnt2}, ' ')
 		 , SYS_LAST_PRCSS_YMS = CURRENT_TIMESTAMP
-		 , SYS_LAST_UNO = #{sysLastUno}
+		 , SYS_UPDATED_UNO = #{sysLastUno}
 	 WHERE OPER_GROUP_CD = #{operGroupCd}
 	   AND LANG_DSTCD = #{langDstcd}
 	   AND ERR_MSGCD = #{errMsgcd}

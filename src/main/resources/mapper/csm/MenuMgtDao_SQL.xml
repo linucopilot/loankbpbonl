@@ -107,8 +107,8 @@
 		     , APPROVAL_YN
 		     , USE_YN
 		     , BRANCH_AUTH
-		     , SYS_LAST_PRCSS_YMS
-		     , SYS_LAST_UNO)
+		     , SYS_CREATE_YMS
+		     , SYS_CREATE_UNO)
 	    VALUES 
 	    	 ( #{operGroupCd}
 	    	 , CASE WHEN #{menuLev}='1' THEN (SELECT 'M'||LPAD(NVL(MAX(SUBSTR(MENU_ID,2)),'00')+1,2,'0') FROM ${schema}.TSCSM0002 WHERE OPER_GROUP_CD = #{operGroupCd} AND PARENT_MENU_ID = 'M')
@@ -140,8 +140,8 @@
 			 , APPROVAL_YN         = #{approvalYn}
 			 , USE_YN              = #{useYn}
 			 , BRANCH_AUTH		   = #{branchAuth}
-			 , SYS_LAST_PRCSS_YMS  = CURRENT_TIMESTAMP
-			 , SYS_LAST_UNO        = #{sysLastUno}
+			 , SYS_CREATE_YMS  = CURRENT_TIMESTAMP
+			 , SYS_CREATE_UNO        = #{sysLastUno}
 		 WHERE OPER_GROUP_CD       = #{operGroupCd}
 		   AND MENU_ID 			   = #{menuId}
 	</update>

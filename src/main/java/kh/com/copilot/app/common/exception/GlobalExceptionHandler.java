@@ -25,16 +25,14 @@ import kh.com.copilot.app.common.dto.ErrorMessageDTO;
 import kh.com.copilot.app.common.dto.ResponseErrorMessageDTO;
 import kh.com.copilot.app.common.dto.ResultPayload;
 import kh.com.copilot.app.csm.dao.MsgMgtDao;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequiredArgsConstructor
 @ControllerAdvice
 public class GlobalExceptionHandler implements ResponseBodyAdvice<Object> {
 	private static final String UNKNOWN_ERROR_MESSAGE = "An error occurred during the transaction. Please check the transaction status and try again.";
 	private final MsgMgtDao msgMgtDao;
-	
+
 	public GlobalExceptionHandler(MsgMgtDao dMgtDao) {
 		this.msgMgtDao = dMgtDao;
 	}
@@ -45,7 +43,7 @@ public class GlobalExceptionHandler implements ResponseBodyAdvice<Object> {
 //		log.error("BusinessException", e);		
 		return this.getErrorMessage(request, e);
 	}
-	
+
 	@ResponseBody
 	@ExceptionHandler(BusinessAPIException.class)
 	public ResultPayload handleBusinessApiException(HttpServletRequest request, BusinessAPIException e) {
@@ -75,7 +73,7 @@ public class GlobalExceptionHandler implements ResponseBodyAdvice<Object> {
 					.exceptionTrace(getPrintStackTrace(e)).build());
 		} else {
 			rPayload.setResultCd(Constants.DEFUALT_ERROR_CODE);
-				rPayload.setResultData(ResponseErrorMessageDTO.builder().errorMsg(UNKNOWN_ERROR_MESSAGE)
+			rPayload.setResultData(ResponseErrorMessageDTO.builder().errorMsg(UNKNOWN_ERROR_MESSAGE)
 					.exceptionTrace(getPrintStackTrace(e)).build());
 		}
 		return rPayload;
@@ -84,8 +82,8 @@ public class GlobalExceptionHandler implements ResponseBodyAdvice<Object> {
 	private ResultPayload getBusinessAPIException(HttpServletRequest request, BusinessAPIException e) {
 		ResultPayload rPayload = new ResultPayload();
 		rPayload.setResultCd(e.getMessageCode());
-		rPayload.setResultData(ResponseErrorMessageDTO.builder().errorMsg(e.getErrorMessage()).errChnlDstcd(e.getChnlDstcd())
-				.exceptionTrace(getPrintStackTrace(e)).build());
+		rPayload.setResultData(ResponseErrorMessageDTO.builder().errorMsg(e.getErrorMessage())
+				.errChnlDstcd(e.getChnlDstcd()).exceptionTrace(getPrintStackTrace(e)).build());
 
 		return rPayload;
 	}
@@ -107,8 +105,10 @@ public class GlobalExceptionHandler implements ResponseBodyAdvice<Object> {
 					.treatMsg("Please register the error code on the this page.").build());
 
 		} else {
-			ErrorMessageDTO treatment = result.stream().filter(p -> "T".equals(p.getMsgKndCdNo())).findFirst().orElse(null);
-			ErrorMessageDTO error = result.stream().filter(p -> !"T".equals(p.getMsgKndCdNo())).findFirst().orElse(null);
+			ErrorMessageDTO treatment = result.stream().filter(p -> "T".equals(p.getMsgKndCdNo())).findFirst()
+					.orElse(null);
+			ErrorMessageDTO error = result.stream().filter(p -> !"T".equals(p.getMsgKndCdNo())).findFirst()
+					.orElse(null);
 
 			rPayload.setResultData(ResponseErrorMessageDTO.builder()
 					.errorMsg(error != null ? error.getOutptCtnt1() : "The Error Code is not defined")
@@ -130,8 +130,7 @@ public class GlobalExceptionHandler implements ResponseBodyAdvice<Object> {
 
 	@Override
 	public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-		// TODO Auto-generated method stub
-		return ResultPayload.class.isAssignableFrom(returnType.getParameterType());
+		return true;
 	}
 
 	@Override

@@ -75,9 +75,9 @@ Start Tomcat:
 
 Application URLs:
 
-- `http://localhost:8080/loankbpbonl/api/health`
-- `http://localhost:8080/loankbpbonl/api/database/info`
-- `http://localhost:8080/loankbpbonl/api/database/dual?value=Hello`
+- `http://localhost:8092/loankbpbonl/api/health`
+- `http://localhost:8092/loankbpbonl/api/database/info`
+- `http://localhost:8092/loankbpbonl/api/database/dual?value=Hello`
 
 The database diagnostic endpoints should be removed or access-controlled before production.
 
@@ -111,7 +111,7 @@ Change only the Tomcat resource's URL, username, password and pool settings for 
 - Tune pool sizes against Oracle capacity and the number of Tomcat instances.
 - Use HTTPS and appropriate access controls in production.
 
-## 7. Create menu table
+## 7. Create CSM table
 
 ```sql
 CREATE TABLE LNE_MGR.TSCSM0001 (
@@ -124,15 +124,17 @@ CREATE TABLE LNE_MGR.TSCSM0001 (
     USE_YN               CHAR(1)         NOT NULL,
     APPROVAL_YN          CHAR(1)         NOT NULL,
     BRANCH_AUTH          VARCHAR2(1000),
-    SYS_CREATE_PRCSS_YMS TIMESTAMP       NOT NULL,
-    SYS_LAST_PRCSS_YMS   TIMESTAMP       NOT NULL,
+    SYS_CREATE_YMS       TIMESTAMP       NOT NULL,
+    SYS_UPDATED_YMS      TIMESTAMP       NOT NULL,
     SYS_CREATE_UNO       VARCHAR2(20)    NOT NULL,
-    SYS_LAST_UNO         VARCHAR2(20)    NOT NULL
+    SYS_UPDATED_UNO      VARCHAR2(20)    NOT NULL
 );
 
 ALTER TABLE LNE_MGR.TSCSM0001
     ADD CONSTRAINT PK_TSCSM_MENU
     PRIMARY KEY (OPER_GROUP_CD, MENU_ID);
+    
+GRANT SELECT, INSERT, UPDATE, DELETE ON LNE_MGR.TSCSM0001 TO LNE_APP;
 
 CREATE TABLE LNE_MGR.TSCSM0002 (
     OPER_GROUP_CD        CHAR(3)         NOT NULL,
@@ -144,17 +146,16 @@ CREATE TABLE LNE_MGR.TSCSM0002 (
     DEP_CODE             VARCHAR2(5),
     REG_CODE             VARCHAR2(5),
     USE_YN               CHAR(1)         NOT NULL,
-    SYS_CREATE_PRCSS_YMS TIMESTAMP       NOT NULL,
-    SYS_LAST_PRCSS_YMS   TIMESTAMP       NOT NULL,
+    SYS_CREATE_YMS       TIMESTAMP       NOT NULL,
+    SYS_UPDATED_YMS      TIMESTAMP       NOT NULL,
     SYS_CREATE_UNO       VARCHAR2(20)    NOT NULL,
-    SYS_LAST_UNO         VARCHAR2(20)    NOT NULL
+    SYS_UPDATED_UNO      VARCHAR2(20)    NOT NULL
 );
 
 ALTER TABLE LNE_MGR.TSCSM0002
     ADD CONSTRAINT XSCSM0001P
     PRIMARY KEY (OPER_GROUP_CD, UNO);
 
-GRANT CREATE SESSION TO LNE_APP;
 GRANT SELECT, INSERT, UPDATE, DELETE ON LNE_MGR.TSCSM0002 TO LNE_APP;
 
 CREATE TABLE LNE_MGR.TSCSM0003 (
@@ -165,10 +166,10 @@ CREATE TABLE LNE_MGR.TSCSM0003 (
     OUTPT_CTNT1          VARCHAR2(1000)   NOT NULL,
     OUTPT_CTNT2          VARCHAR2(1000),
     MSG_KND_CD_NO        VARCHAR2(2)      NOT NULL,
-    SYS_CREATE_PRCSS_YMS TIMESTAMP        NOT NULL,
-    SYS_LAST_PRCSS_YMS   TIMESTAMP        NOT NULL,
-    SYS_CREATE_UNO       VARCHAR2(20)     NOT NULL,
-    SYS_LAST_UNO         VARCHAR2(20)     NOT NULL
+    SYS_CREATE_YMS       TIMESTAMP       NOT NULL,
+    SYS_UPDATED_YMS      TIMESTAMP       NOT NULL,
+    SYS_CREATE_UNO       VARCHAR2(20)    NOT NULL,
+    SYS_UPDATED_UNO      VARCHAR2(20)    NOT NULL
 );
 
 ALTER TABLE LNE_MGR.TSCSM0003

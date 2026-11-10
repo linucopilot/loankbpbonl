@@ -17,7 +17,7 @@
 			, USR.DEP_CODE 	  	 AS "regiCode"
 			, USR.REG_CODE 	  	 AS "postCode"
 			, USR.USE_YN         AS "useYn"
-			, TO_CHAR(USR.SYS_CREATE_PRCSS_YMS, 'DDMMYYYY')  AS "sysCreateYms"
+			, TO_CHAR(USR.SYS_CREATE_YMS, 'DDMMYYYY')  AS "sysCreateYms"
 			, TO_CHAR(USR.SYS_LAST_PRCSS_YMS,   'DDMMYYYY')  AS "sysLastYms"
 			, USR.SYS_CREATE_UNO 	      	  AS "sysCreateUno"
 			, USR.SYS_LAST_UNO 	      	 	  AS "sysLastUno"
