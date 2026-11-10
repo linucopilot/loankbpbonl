@@ -10,7 +10,7 @@
 			  USR.OPER_GROUP_CD  AS "operGroupCd"
 			, USR.UNO            AS "uno"
 			, USR.USER_NAME      AS "userName"
-			, USR.EMPLOYEE_ID	 AS "empId"
+			--, USR.EMPLOYEE_ID	 AS "empId"
 			, USR.PWD            AS "pwd"
 			, USR.BRN_CODE       AS "brnCode"
 			, USR.POS_CODE 	  	 AS "postCode"
@@ -18,9 +18,9 @@
 			, USR.REG_CODE 	  	 AS "postCode"
 			, USR.USE_YN         AS "useYn"
 			, TO_CHAR(USR.SYS_CREATE_YMS, 'DDMMYYYY')  AS "sysCreateYms"
-			, TO_CHAR(USR.SYS_LAST_PRCSS_YMS,   'DDMMYYYY')  AS "sysLastYms"
+			, TO_CHAR(USR.SYS_UPDATED_YMS,   'DDMMYYYY')  AS "sysLastYms"
 			, USR.SYS_CREATE_UNO 	      	  AS "sysCreateUno"
-			, USR.SYS_LAST_UNO 	      	 	  AS "sysLastUno"
+			, USR.SYS_UPDATED_UNO 	      	 	  AS "sysLastUno"
 			, COUNT(*) OVER ()   AS "totalCnt"
 		  FROM ${schema}.TSCSM0002 USR
    	     WHERE 1=1

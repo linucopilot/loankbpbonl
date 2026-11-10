@@ -88,7 +88,7 @@
       , OUTPT_CTNT2                                       
       , MSG_KND_CD_NO    
       , SYS_CREATE_YMS
-      , SYS_LAST_PRCSS_YMS                            
+      , SYS_UPDATED_YMS                            
       , SYS_CREATE_UNO
       , SYS_UPDATED_UNO                                      
 	)                                                     
@@ -113,7 +113,7 @@
 	   SET 
 		   OUTPT_CTNT1 = #{outptCtnt1}
 		 , OUTPT_CTNT2 = NVL(#{outptCtnt2}, ' ')
-		 , SYS_LAST_PRCSS_YMS = CURRENT_TIMESTAMP
+		 , SYS_UPDATED_YMS = CURRENT_TIMESTAMP
 		 , SYS_UPDATED_UNO = #{sysLastUno}
 	 WHERE OPER_GROUP_CD = #{operGroupCd}
 	   AND LANG_DSTCD = #{langDstcd}
